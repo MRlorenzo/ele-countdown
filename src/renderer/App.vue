@@ -1,9 +1,7 @@
 <template>
   <div>
-    <img :src="page" @click="tigger" :style="imgStyle">
-    <el-tooltip class="item" effect="light" content="点击打开设置" placement="top">
-      <div ref="clock" class="clock" @click="openChangeTime"></div>
-    </el-tooltip>
+    <img :src="page" @click="tigger" @contextmenu="oncontextmenu" :style="imgStyle">
+    <div ref="clock" class="clock" @click="openChangeTime"></div>
 
     <time-select ref="timeSelect" @submit="changeTime"></time-select>
   </div>
@@ -71,7 +69,7 @@ const TYPE = {TIME: 'time', STEP: 'step'};
           countdown: true, // 倒计时向下
           //minimumDigits: 5,        //设定位数
           language: 'chinese',
-          callbacks: {
+          /*callbacks: {
             start() {
               // console.log('倒计时开始');
             },
@@ -81,12 +79,8 @@ const TYPE = {TIME: 'time', STEP: 'step'};
             interval() {
               // clock.increment();
             }  //destroy | create | init | interval | start | stop | reset
-          }
+          }*/
         });
-      },
-      reset(){
-        let targetDate = moment(moment.now().valueOf() + 1000 * 60); // 一分钟后
-        this.start(targetDate);
       },
       tigger(){
         const running = this.clock.running;
@@ -99,6 +93,12 @@ const TYPE = {TIME: 'time', STEP: 'step'};
       getWindowZise(){
         let currentWindow = this.$electron.remote.getCurrentWindow();
         return currentWindow.getContentSize();
+      },
+      oncontextmenu($event){
+        this.$electron.ipcRenderer.send('changeImage');
+        this.$electron.ipcRenderer.once('changeImage-done', (event , [filePath]) =>{
+          this.page = filePath;
+        });
       }
     },
     created(){
@@ -131,9 +131,9 @@ const TYPE = {TIME: 'time', STEP: 'step'};
     cursor: pointer;
 }
 div{
-  cursor: pointer;
+    cursor: pointer;
 }
 .flip-clock-label{
-      font-size: 1.5em;
+    font-size: 1.5em;
 }
 </style>

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import {app, ipcMain, BrowserWindow, dialog} from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -23,10 +23,11 @@ function createWindow () {
     width: 1000,
     titleBarStyle: 'hidden',
     webPreferences: {
-      devTools: true
+      devTools: true,
+      webSecurity: false
     }
   })
-
+  mainWindow.setMenu(null)
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
@@ -35,6 +36,19 @@ function createWindow () {
 
   mainWindow.on('resize' , (event) => {
     event.sender.send('resize', mainWindow.getContentSize());
+  })
+
+  ipcMain.on('changeImage', event => {
+    const options = {
+      filters: [ { name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
+    }
+
+    dialog.showOpenDialog( options , function (filePaths) {
+      if(!filePaths || filePaths.length === 0){
+        return ;
+      }
+      event.sender.send('changeImage-done' , filePaths);
+    })
   })
 }
 
