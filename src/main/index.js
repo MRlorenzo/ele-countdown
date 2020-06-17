@@ -20,13 +20,21 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      devTools: true
+    }
   })
 
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
     mainWindow = null
+  })
+
+  mainWindow.on('resize' , (event) => {
+    event.sender.send('resize', mainWindow.getContentSize());
   })
 }
 
