@@ -15,10 +15,7 @@ import './assets/lib/flipclock.min';
 import TimeSelect from './components/TimeSelect';
 import Page from '../../static/images/page.jpg';
 
-const KeyMap = {
-  ENTER: 13,
-  SPAN: 32
-}
+const TYPE = {TIME: 'time', STEP: 'step'};
   export default {
     name: 'app',
     components: {
@@ -43,8 +40,18 @@ const KeyMap = {
         this.$refs.timeSelect.open();
       },
       changeTime( data ){
-        const { time } = data;
-        this.start(moment(time, 'YYYY-MM-DD HH:mm:ss'));
+        const {
+          type,
+          time,
+          step,
+          duration
+        } = data;
+        if (type === TYPE.TIME){
+          this.start(moment(time, 'YYYY-MM-DD HH:mm:ss'));
+        }else if(type === TYPE.STEP){
+          let targetDate = moment().add(step , duration);
+          this.start(targetDate);
+        }
       },
       start( targetDate ){
         this.running = true;
@@ -96,9 +103,12 @@ const KeyMap = {
     },
     created(){
       window.vm = this;
+      // 设置图片大小
       const [width , height] = this.getWindowZise();
       this.img_width = width;
       this.img_height = height;
+
+      // 窗口大小发生改变。
       this.$electron.ipcRenderer.on('resize', (event , [width , height]) => {
         this.img_width = width;
         this.img_height = height;
@@ -106,11 +116,6 @@ const KeyMap = {
     },
     mounted(){
       this.start(moment());
-      /*$(document).on('keydown' , event=>{
-        if (event.keyCode === KeyMap.ENTER || event.keyCode === KeyMap.SPAN){
-          this.tigger();
-        }
-      })*/
     }
   }
 </script>
@@ -123,6 +128,10 @@ const KeyMap = {
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
+    cursor: pointer;
+}
+div{
+  cursor: pointer;
 }
 .flip-clock-label{
       font-size: 1.5em;

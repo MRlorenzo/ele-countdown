@@ -10,15 +10,10 @@
 
             <el-form-item>
                 <el-radio-group v-model="d.type" size="mini">
+                    <el-radio-button label="step">间隔</el-radio-button>
                     <el-radio-button label="time">日期</el-radio-button>
-                    <el-radio-button label="step">之后</el-radio-button>
                 </el-radio-group>
             </el-form-item>
-
-            <el-form-item label="宽度">
-                <el-slider v-model="d.widthRate"> </el-slider>
-            </el-form-item>
-
 
             <el-form-item label="日期" v-show="d.type == 'time'">
                 <el-date-picker
@@ -62,22 +57,18 @@
 <script>
   import moment from 'moment';
   import { clone } from '../../utils';
-
-  const TYPE = {TIME: 'time', STEP: 'step'};
   // 支持的度量有 years、months、weeks、days、hours、minutes 和 seconds
-  const durationList = [
-    {label: '年', value: 'years'},
-    {label: '月', value: 'months'},
-    {label: '周', value: 'weeks'},
-    {label: '天', value: 'days'},
-    {label: '时', value: 'hours'},
-    {label: '分', value: 'minutes'},
-    {label: '秒', value: 'seconds'}
-  ]
+  import duration from './duration.json';
+  const durationList = Object.keys(duration).map(k=>{
+    return {
+      label: duration[k],
+      value: k
+    }
+  });
+  const TYPE = {TIME: 'time', STEP: 'step'};
   const DEFAULT_DATA = {
-    type: TYPE.TIME,
+    type: TYPE.STEP,
     time: moment().format('YYYY-MM-DD HH:mm:ss'),
-    widthRate: 80,
     step: 1,
     duration: 'minutes'
   };
