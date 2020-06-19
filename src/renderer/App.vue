@@ -1,6 +1,11 @@
 <template>
   <div>
-    <img :src="page" @click="tigger" @contextmenu="oncontextmenu" :style="imgStyle">
+    <img v-show="!loadImgError"
+            ref="page"
+            :src="page"
+            @click="tigger"
+            :style="imgStyle"/>
+
     <div ref="clock" class="clock" @click="openChangeTime"></div>
 
     <time-select ref="timeSelect" @submit="changeTime"></time-select>
@@ -13,6 +18,7 @@ import './assets/lib/flipclock.min';
 import TimeSelect from './components/TimeSelect';
 import Page from '../../static/images/page.jpg';
 import Mousetrap from 'mousetrap';
+import { getBase64Image } from './utils';
 
 const TYPE = {TIME: 'time', STEP: 'step'};
   export default {
@@ -26,7 +32,8 @@ const TYPE = {TIME: 'time', STEP: 'step'};
         running: false,
         page: Page,
         img_width: 0,
-        img_height: 0
+        img_height: 0,
+        loadImgError: false
       }
     },
     computed: {
@@ -100,14 +107,26 @@ const TYPE = {TIME: 'time', STEP: 'step'};
         this.$electron.ipcRenderer.once('changeImage-done', (event , [filePath]) =>{
           this.page = filePath;
         });
+      },
+      whenImageLoad(){
+        let img = this.$refs.page;
+        // 图片加载成功
+        img.onload = (event)=>{
+          this.loadImgError = false;
+          // base64 getBase64Image(img)
+        }
+        // 图片加载失败
+        img.onerror = (event)=>{
+          this.loadImgError = true;
+        }
       }
     },
     created(){
       window.vm = this;
       // 设置图片大小
       const [width , height] = this.getWindowZise();
-      this.img_width = width;
-      this.img_height = height;
+      this.img_width = width || 1004;
+      this.img_height = height || 587;
 
       // 窗口大小发生改变。
       this.$electron.ipcRenderer.on('resize', (event , [width , height]) => {
@@ -120,7 +139,11 @@ const TYPE = {TIME: 'time', STEP: 'step'};
 
       Mousetrap.bind(['f12', 'ctrl+shift+i'], ()=>{
         this.$electron.ipcRenderer.send('openDevTools');
-      })
+      });
+
+      this.whenImageLoad();
+
+      document.oncontextmenu = this.oncontextmenu;
     }
   }
 </script>

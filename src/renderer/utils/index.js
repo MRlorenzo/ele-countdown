@@ -7,3 +7,14 @@ export function clone( target ) {
   }
   return target;
 }
+
+//将图片转换为base64
+export function getBase64Image(img) {
+  let canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  let ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, img.width, img.height);
+  let dataURL = canvas.toDataURL("image/png");
+  return dataURL
+}
