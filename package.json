@@ -7,6 +7,7 @@
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
+    "build32": "node .electron-vue/build.js && electron-builder --win --ia32",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
@@ -55,7 +56,6 @@
     "jquery": "^3.5.1",
     "moment": "^2.26.0",
     "mousetrap": "^1.6.5",
-    "nedb": "^1.8.0",
     "vue": "^2.6.10",
     "vue-electron": "^1.0.6"
   },
