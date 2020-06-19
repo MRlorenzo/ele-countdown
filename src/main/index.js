@@ -1,15 +1,15 @@
 import {app, ipcMain, BrowserWindow, dialog} from 'electron'
-
+const isDev =  process.env.NODE_ENV === 'development'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (process.env.NODE_ENV !== 'development') {
+if (!isDev) {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
 let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
+const winURL = isDev
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
@@ -38,17 +38,25 @@ function createWindow () {
     event.sender.send('resize', mainWindow.getContentSize());
   })
 
-  ipcMain.on('changeImage', event => {
-    const options = {
-      filters: [ { name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
-    }
+}
 
-    dialog.showOpenDialog( options , function (filePaths) {
-      if(!filePaths || filePaths.length === 0){
-        return ;
-      }
-      event.sender.send('changeImage-done' , filePaths);
-    })
+ipcMain.on('changeImage', event => {
+  const options = {
+    filters: [ { name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
+  }
+
+  dialog.showOpenDialog( options , function (filePaths) {
+    if(!filePaths || filePaths.length === 0){
+      return ;
+    }
+    event.sender.send('changeImage-done' , filePaths);
+  })
+})
+
+if (!isDev){
+  ipcMain.on('openDevTools', event=>{
+    const contents = event.sender;
+    contents.openDevTools();
   })
 }
 

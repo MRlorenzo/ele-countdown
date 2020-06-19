@@ -8,10 +8,11 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
+import moment from 'moment';
 import './assets/lib/flipclock.min';
 import TimeSelect from './components/TimeSelect';
 import Page from '../../static/images/page.jpg';
+import Mousetrap from 'mousetrap';
 
 const TYPE = {TIME: 'time', STEP: 'step'};
   export default {
@@ -116,6 +117,10 @@ const TYPE = {TIME: 'time', STEP: 'step'};
     },
     mounted(){
       this.start(moment());
+
+      Mousetrap.bind(['f12', 'ctrl+shift+i'], ()=>{
+        this.$electron.ipcRenderer.send('openDevTools');
+      })
     }
   }
 </script>
