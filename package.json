@@ -15,7 +15,9 @@
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "postinstall": ""
+    "postinstall": "",
+    "box": "npm run pack && npm run box:mini",
+    "box:mini": "asar pack dist mini/resources/app.asar"
   },
   "build": {
     "productName": "countdown",
