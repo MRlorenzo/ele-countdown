@@ -47,8 +47,8 @@
 
         <!--表单控制区-->
         <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="onSubmit">更改</el-button>
-            <el-button @click="close">取消</el-button>
+            <el-button type="primary" @click.stop="onSubmit">更改</el-button>
+            <el-button @click.stop="close">取消</el-button>
         </div>
 
     </el-dialog>
