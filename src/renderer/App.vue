@@ -35,7 +35,8 @@
 				clock_height: 0,
                 win_width: 0,
                 win_height:0,
-                show: false
+                show: false,
+                init: false
 			}
 		},
 		computed: {
@@ -101,7 +102,6 @@
 				});
 			},
 			tigger($event) {
-				console.log('tigger')
 				const running = this.clock.running;
 				if (running) {
 					this.clock.stop();
@@ -125,7 +125,11 @@
 				img.onload = (event) => {
 					this.loadImgError = false;
 					// base64 getBase64Image(img)
-					this.imgURL = getBase64Image(img);
+                    if (!this.init){
+                    	this.init = true;
+                    }else{
+						this.imgURL = getBase64Image(img);
+                    }
 				}
 				// 图片加载失败
 				img.onerror = (event) => {
